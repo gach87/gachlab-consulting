@@ -1,0 +1,163 @@
+﻿@page "/"
+@implements IDisposable
+@inject UiCulture Ui
+@inject IOptions<SiteOptions> SiteOptions
+
+<PageTitle>@Ui.Copy.PageTitle</PageTitle>
+
+@if (!_ready)
+{
+    <p class="note" style="padding:2rem">…</p>
+}
+else
+{
+    var copy = Ui.Copy;
+    var site = SiteOptions.Value;
+    var email = site.Email;
+    var calendar = string.IsNullOrWhiteSpace(site.CalendarUrl) ? null : site.CalendarUrl.Trim();
+    var hasCalendar = calendar is not null;
+    var mailtoContract = $"mailto:{email}?subject={Uri.EscapeDataString(copy.MailSubject)}";
+    var mailtoCall = $"mailto:{email}?subject={Uri.EscapeDataString(copy.CallSubject)}";
+    var bookHref = hasCalendar ? calendar! : mailtoCall;
+
+    <div class="atmosphere" aria-hidden="true">
+        <span class="orb orb-a"></span>
+        <span class="orb orb-b"></span>
+        <span class="grid"></span>
+    </div>
+
+    <div class="topbar">
+        <nav class="lang" aria-label="Language">
+            <button type="button" class="lang-btn @(Ui.Lang == "es" ? "is-active" : null)" @onclick='() => SetLang("es")'>ES</button>
+            <button type="button" class="lang-btn @(Ui.Lang == "en" ? "is-active" : null)" @onclick='() => SetLang("en")'>EN</button>
+        </nav>
+    </div>
+
+    <main class="shell">
+        <header class="hero">
+            <div class="identity">
+                <img class="portrait"
+                     src="img/guillermo.jpg"
+                     alt="Guillermo Carrillo"
+                     width="112"
+                     height="112"
+                     loading="eager"
+                     decoding="async" />
+                <p class="brand">Guillermo Carrillo</p>
+            </div>
+            <h1>@copy.Headline</h1>
+            <p class="lede">@copy.Lede</p>
+            <div class="ctas">
+                @if (hasCalendar)
+                {
+                    <a class="btn primary" href="@bookHref" target="_blank" rel="noopener noreferrer">@copy.CtaBook</a>
+                }
+                else
+                {
+                    <a class="btn primary" href="@bookHref">@copy.CtaBook</a>
+                }
+                <a class="btn ghost" href="@mailtoContract">@copy.CtaMail</a>
+            </div>
+            <p class="note">@copy.Note</p>
+            <div class="signal" aria-hidden="true">
+                <span class="node">php</span>
+                <span class="pipe"></span>
+                <span class="node">js</span>
+                <span class="pipe"></span>
+                <span class="node">java</span>
+                <span class="pipe"></span>
+                <span class="node">.net</span>
+                <span class="pipe"></span>
+                <span class="node on">aws</span>
+            </div>
+        </header>
+
+        <section class="packs" aria-labelledby="packs-title">
+            <h2 id="packs-title" class="section-label">@copy.PacksTitle</h2>
+            <div class="pack-grid pack-grid-4">
+                <article>
+                    <h3>@copy.PipelineTitle</h3>
+                    <p>@copy.PipelineBody</p>
+                    <p class="price">@copy.PipelinePrice</p>
+                </article>
+                <article>
+                    <h3>@copy.ArchTitle</h3>
+                    <p>@copy.ArchBody</p>
+                    <p class="price">@copy.ArchPrice</p>
+                </article>
+                <article class="featured">
+                    <h3>@copy.SetupTitle</h3>
+                    <p>@copy.SetupBody</p>
+                    <p class="price">@copy.SetupPrice</p>
+                </article>
+                <article>
+                    <h3>@copy.RetainerTitle</h3>
+                    <p>@copy.RetainerBody</p>
+                    <p class="price">@copy.RetainerPrice</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="agenda" id="agenda">
+            <h2>@copy.AgendaTitle</h2>
+            <p>@copy.AgendaBody</p>
+            <div class="fallback">
+                @if (hasCalendar)
+                {
+                    <a class="btn primary" href="@calendar" target="_blank" rel="noopener noreferrer">@copy.AgendaOpen</a>
+                    <a class="btn ghost" href="@mailtoCall">@copy.AgendaMail</a>
+                }
+                else
+                {
+                    <a class="btn primary" href="@mailtoCall">@copy.CtaMail</a>
+                }
+            </div>
+        </section>
+
+        <section class="networks" aria-label="@copy.NetworksTitle">
+            <h2 class="section-label">@copy.NetworksTitle</h2>
+            <ul class="network-list">
+                @if (!string.IsNullOrWhiteSpace(site.UpworkUrl))
+                {
+                    <li><a href="@site.UpworkUrl" target="_blank" rel="noopener noreferrer">Upwork</a></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(site.WorkanaUrl))
+                {
+                    <li><a href="@site.WorkanaUrl" target="_blank" rel="noopener noreferrer">Workana</a></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(site.GitHubUrl))
+                {
+                    <li><a href="@site.GitHubUrl" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                }
+                @if (!string.IsNullOrWhiteSpace(site.LinkedInUrl))
+                {
+                    <li><a href="@site.LinkedInUrl" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+                }
+            </ul>
+        </section>
+
+        <footer>
+            <p>@copy.Footer</p>
+        </footer>
+    </main>
+}
+
+@code {
+    private bool _ready;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Ui.Changed += OnChanged;
+        await Ui.InitializeAsync();
+        _ready = true;
+    }
+
+    private async Task SetLang(string lang)
+    {
+        await Ui.SetAsync(lang);
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Ui.Changed -= OnChanged;
+}

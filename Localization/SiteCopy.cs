@@ -1,0 +1,101 @@
+using System.Globalization;
+
+namespace Gachlab.Consulting.Site.Localization;
+
+public sealed record SiteCopy(
+    string Headline,
+    string Lede,
+    string CtaBook,
+    string CtaMail,
+    string Note,
+    string PacksTitle,
+    string PipelineTitle,
+    string PipelineBody,
+    string PipelinePrice,
+    string ArchTitle,
+    string ArchBody,
+    string ArchPrice,
+    string SetupTitle,
+    string SetupBody,
+    string SetupPrice,
+    string RetainerTitle,
+    string RetainerBody,
+    string RetainerPrice,
+    string AgendaTitle,
+    string AgendaBody,
+    string AgendaOpen,
+    string AgendaMail,
+    string AgendaAsk,
+    string NetworksTitle,
+    string Footer,
+    string MailSubject,
+    string CallSubject,
+    string PageTitle);
+
+public static class SiteCopyCatalog
+{
+    public static SiteCopy For(CultureInfo culture) =>
+        culture.TwoLetterISOLanguageName.Equals("en", StringComparison.OrdinalIgnoreCase)
+            ? En
+            : Es;
+
+    public static readonly SiteCopy Es = new(
+        Headline: "CI/CD, deploy y arquitectura bajo contrato",
+        Lede: "Engagements acotados — no full-time. Pipelines con GitHub Actions, Docker y AWS; revisión de arquitectura de aplicaciones web en PHP, JavaScript, Java y .NET; handoff documentado y soporte mensual opcional.",
+        CtaBook: "Agendar 20 min",
+        CtaMail: "Escribir",
+        Note: "USD $40/h · hasta 20 h/semana · español e inglés",
+        PacksTitle: "Servicios",
+        PipelineTitle: "Pipeline Audit",
+        PipelineBody: "Repo → build → prod. Secrets, rollback, hallazgos priorizados y plan de CI/CD.",
+        PipelinePrice: "$400–700",
+        ArchTitle: "Architecture Review",
+        ArchBody: "Aplicaciones web y APIs en PHP, JS, Java o .NET. Módulos, auth, datos y riesgos priorizados.",
+        ArchPrice: "$500–900",
+        SetupTitle: "CI/CD Setup",
+        SetupBody: "Pipeline, staging/prod, runbook y sesión de handoff.",
+        SetupPrice: "$1.8k–3.2k",
+        RetainerTitle: "Retainer",
+        RetainerBody: "Horas reservadas para estabilización y soporte post-entrega.",
+        RetainerPrice: "Desde $320/mes",
+        AgendaTitle: "Contacto",
+        AgendaBody: "Agenda una llamada de 20 minutos o escribe para coordinar alcance y plazos.",
+        AgendaOpen: "Abrir agenda",
+        AgendaMail: "Escribir por correo",
+        AgendaAsk: "Escribir para agendar",
+        NetworksTitle: "Perfiles",
+        Footer: "Guillermo Carrillo · consultoría independiente · ES + EN",
+        MailSubject: "Consulting: CI/CD or architecture review",
+        CallSubject: "Call 20 min — consulting",
+        PageTitle: "Guillermo Carrillo — CI/CD y arquitectura");
+
+    public static readonly SiteCopy En = new(
+        Headline: "CI/CD, deploy & architecture on contract",
+        Lede: "Scoped engagements — not full-time. Pipelines with GitHub Actions, Docker, and AWS; web application architecture reviews in PHP, JavaScript, Java, and .NET; documented handoff and optional monthly support.",
+        CtaBook: "Book 20 min",
+        CtaMail: "Email",
+        Note: "USD $40/h · up to 20 h/week · English & Spanish",
+        PacksTitle: "Services",
+        PipelineTitle: "Pipeline Audit",
+        PipelineBody: "Repo → build → prod. Secrets, rollback, prioritized findings, and a CI/CD plan.",
+        PipelinePrice: "$400–700",
+        ArchTitle: "Architecture Review",
+        ArchBody: "Web apps and APIs in PHP, JS, Java, or .NET. Modules, auth, data, and prioritized risks.",
+        ArchPrice: "$500–900",
+        SetupTitle: "CI/CD Setup",
+        SetupBody: "Pipeline, staging/prod, runbook, and a handover call.",
+        SetupPrice: "$1.8k–3.2k",
+        RetainerTitle: "Retainer",
+        RetainerBody: "Reserved hours for stabilization and post-delivery support.",
+        RetainerPrice: "From $320/mo",
+        AgendaTitle: "Contact",
+        AgendaBody: "Book a 20-minute call or email to align on scope and timeline.",
+        AgendaOpen: "Open calendar",
+        AgendaMail: "Email instead",
+        AgendaAsk: "Email to schedule",
+        NetworksTitle: "Profiles",
+        Footer: "Guillermo Carrillo · independent consulting · ES + EN",
+        MailSubject: "Consulting: CI/CD or architecture review",
+        CallSubject: "Call 20 min — consulting",
+        PageTitle: "Guillermo Carrillo — CI/CD & architecture");
+}

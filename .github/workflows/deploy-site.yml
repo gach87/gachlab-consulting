@@ -1,0 +1,52 @@
+name: Deploy Site (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Publish Blazor WASM
+        run: dotnet publish Gachlab.Consulting.Site.csproj -c Release -o publish
+
+      - name: Set base href for project Pages
+        run: |
+          sed -i 's|<base href="/" />|<base href="/gachlab-consulting/" />|' publish/wwwroot/index.html
+
+      - name: SPA fallback (404 → index)
+        run: cp publish/wwwroot/index.html publish/wwwroot/404.html
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: publish/wwwroot
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
